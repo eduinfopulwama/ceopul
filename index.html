@@ -211,15 +211,15 @@
     border-left:6px solid var(--green-deep);
     padding:28px;
     box-shadow:var(--shadow);
-    margin-bottom:30px;
+    margin-bottom:20px;
   }
   .hero h2{ font-size:clamp(1.5rem,3.6vw,2.3rem); margin-bottom:10px; }
-  .hero p{ line-height:1.7; color:#3a4436; max-width:70ch; }
+  .hero p{ line-height:1.3; color:#3a4436; max-width:70ch; }
   .stat-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(150px,1fr));
-    gap:16px;
-    margin-top:26px;
+    grid-template-columns:repeat(auto-fit, minmax(100px,1fr));
+    gap:10px;
+    margin-top:15px;
   }
   .stat-card{
     background:var(--paper);
@@ -278,6 +278,41 @@
   .gallery-grid figcaption{
     padding:8px 10px; font-size:0.8rem; color:var(--sage);
     font-family:'IBM Plex Mono', monospace;
+  }
+
+  /* ---- Scrolling photo gallery (right-to-left marquee, sourced from a Google Sheet) ---- */
+  .photo-scroll-wrap{
+    position:relative;
+    overflow:hidden;
+    background:var(--paper);
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    padding:14px 0;
+  }
+  .photo-scroll-track{
+    display:flex;
+    align-items:stretch;
+    gap:14px;
+    width:max-content;
+    animation:scrollGalleryRTL 45s linear infinite;
+    padding:0 14px;
+  }
+  .photo-scroll-wrap:hover .photo-scroll-track{ animation-play-state:paused; }
+  .photo-scroll-track figure{
+    margin:0; flex:0 0 auto; width:220px;
+    background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden;
+  }
+  .photo-scroll-track img{ width:220px; height:150px; object-fit:cover; display:block; background:#eee7cf; }
+  .photo-scroll-track figcaption{
+    padding:8px 10px; font-size:0.8rem; color:var(--sage);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  @keyframes scrollGalleryRTL{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .photo-scroll-track{ animation:none; overflow-x:auto; }
   }
 
   table{ width:100%; border-collapse:collapse; background:var(--paper); box-shadow:var(--shadow); }
@@ -429,7 +464,7 @@
     <div class="title-block">
       <div class="eyebrow">Jammu &amp; Kashmir &nbsp;·&nbsp; School Education Department</div>
       <h1>Office of the Chief Education Officer, Pulwama</h1>
-      <div class="sub">Government Office Portal — Est. Records Since Reorganisation of Districts</div>
+      <div class="sub">Scholarships NMMS & Umbrella Scheme Information</div>
     </div>
   </header>
 
@@ -459,7 +494,7 @@
     <section class="page active" id="home">
       <div class="hero">
         <h2>Welcome</h2>
-        <p>This portal carries live scholarship and status records maintained by this office, along with the latest circulars and notices. Use the search box below to filter records, or switch the scholarship category to view a different data set.</p>
+        <p>This portal carries information regarding scholarship, along with the latest notices. Use the search box below to filter records</p>
       </div>
 
       <div class="two-col">
@@ -510,7 +545,7 @@
       <div class="section-title"><h2>About Us</h2></div>
       <div class="hero">
         <h2>Our Mandate</h2>
-        <p>The Office of the Chief Education Officer, Pulwama, functions under the School Education Department, Government of Jammu &amp; Kashmir. The office oversees school administration, scholarship disbursal, academic monitoring and welfare schemes for students across the district.</p>
+        <p>We are providing technical support and overall monitoring of the scholarship schemes particularly National Means cum Merit Scholarship Scheme and Umbrella Scheme for ST Students.</p>
       </div>
       <div class="stat-grid">
         <div class="stat-card"><div class="num">--</div><div class="lbl">Schools Covered</div></div>
@@ -527,25 +562,12 @@
     <!-- GALLERY -->
     <section class="page" id="gallery">
       <div class="section-title"><h2>Gallery</h2></div>
-      <div class="gallery-grid" id="galleryGrid">
-        <figure>
-          <div class="gallery-ph">CEO</div>
-          <figcaption>Office Premises</figcaption>
-        </figure>
-        <figure>
-          <div class="gallery-ph">📚</div>
-          <figcaption>Academic Events</figcaption>
-        </figure>
-        <figure>
-          <div class="gallery-ph">🏫</div>
-          <figcaption>School Visits</figcaption>
-        </figure>
-        <figure>
-          <div class="gallery-ph">🎓</div>
-          <figcaption>Scholarship Camps</figcaption>
-        </figure>
+      <div class="sync-note">Photos scroll live from a Google Sheet — each row holds a Drive photo link (plus an optional caption). Add a row to the sheet and the photo appears here automatically. Hover to pause.</div>
+      <div class="photo-scroll-wrap" id="galleryScrollWrap">
+        <div class="photo-scroll-track" id="galleryTrack">
+          <figure><div class="gallery-ph">Loading…</div></figure>
+        </div>
       </div>
-      <p class="sync-note" style="margin-top:16px;">Placeholder tiles — replace with actual photographs when available.</p>
     </section>
 
     <!-- OFFICE -->
@@ -553,9 +575,9 @@
       <div class="section-title"><h2>Office</h2></div>
       <div class="two-col">
         <div class="card">
-          <h3>Office Details</h3>
+          <h3>Officer Details</h3>
           <ul class="plain">
-            <li><strong>Office:</strong> Chief Education Officer, Pulwama</li>
+            <li><strong>Chief Education Officer:</strong> Miss Anjum Raja</li>
             <li><strong>Department:</strong> School Education Department, J&amp;K</li>
             <li><strong>Jurisdiction:</strong> District Pulwama</li>
           </ul>
@@ -563,8 +585,8 @@
         <div class="card">
           <h3>Office Hours</h3>
           <ul class="plain">
-            <li>Monday – Friday: 10:00 AM – 4:00 PM</li>
-            <li>Saturday: 10:00 AM – 1:00 PM</li>
+            <li>Monday – Saturday: 10:00 AM – 4:00 PM</li>
+            <li>Visiting Hours: 02:00 PM – 4:00 PM</li>
             <li>Sunday &amp; Gazetted Holidays: Closed</li>
           </ul>
         </div>
@@ -578,9 +600,9 @@
         <div class="card">
           <h3>Reach Us</h3>
           <ul class="plain">
-            <li><strong>Address:</strong> Office of the CEO, Pulwama, J&amp;K</li>
-            <li><strong>Email:</strong> ceopulwama@jk.gov.in</li>
-            <li><strong>Phone:</strong> Add office landline</li>
+            <li><strong>Address:</strong> Office of the CEO, Pulwama, 3rd Floor DC Office Pulwama</li>
+            <li><strong>Email:</strong> ceopulssa@rediffmail.com</li>
+            <li><strong>Phone:</strong> 000000000</li>
           </ul>
         </div>
         <div class="card">
@@ -611,7 +633,7 @@
             <strong>NMMS – Fresh Applications</strong>
             <div class="meta">Live Google Sheet</div>
           </div>
-          <a href="#" data-sheet-tab="Fresh-NMMS" onclick="goToHomeWithTab(this);return false;">Open</a>
+          <a href="https://docs.google.com/spreadsheets/d/1i6K0N7s5fYeMRaEKzYLjpT103G3dVXFh8SHQoRDymTs/edit?gid=0#gid=0" data-sheet-tab="Fresh-NMMS" onclick="goToHomeWithTab(this);return false;">Open</a>
         </li>
         <li>
           <div>
@@ -625,14 +647,14 @@
             <strong>ST Scholarship – 9th &amp; 10th</strong>
             <div class="meta">Live Google Sheet</div>
           </div>
-          <a href="#" data-sheet-tab="ST-9th-10th" onclick="goToHomeWithTab(this);return false;">Open</a>
+          <a href="https://docs.google.com/spreadsheets/d/1J2pBi_4IMWlHGbV0lO67syOd1CLfcCao1zqMSy1-ErQ/edit?usp=sharing" data-sheet-tab="ST-9th-10th" onclick="goToHomeWithTab(this);return false;">Open</a>
         </li>
         <li>
           <div>
             <strong>ST Scholarship – 1st to 8th</strong>
             <div class="meta">Live Google Sheet</div>
           </div>
-          <a href="#" data-sheet-tab="ST-1st-8th" onclick="goToHomeWithTab(this);return false;">Open</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ud9yehUKkfwmWxkD89EMhx_-2hq-CZiZ0Ce1gugzl1U/edit?usp=sharing" data-sheet-tab="ST-1st-8th" onclick="goToHomeWithTab(this);return false;">Open</a>
         </li>
         <li>
           <div>
@@ -650,7 +672,7 @@
 
       <div class="hero">
         <h2>District Data Overview</h2>
-        <p>Figures below are pulled live from the office's Google Sheet. They refresh automatically whenever the underlying sheet is updated — just reload this page to see the latest numbers.</p>
+        <p></p>
       </div>
 
       <div class="stat-grid" id="dashStats">
@@ -688,6 +710,7 @@
 
   <footer>
     &copy; 2026 <strong>Office of the Chief Education Officer, Pulwama</strong>. All rights reserved.
+<P>The Site is Designed and Developed by H A Hussain</P>
   </footer>
 </div>
 
@@ -770,9 +793,9 @@
 
   /* ---------- Ticker (edit this list with real notices) ---------- */
   const tickerItems = [
-    'Welcome to the official portal of the CEO Office, Pulwama',
-    'Scholarship data is updated live from the Google Sheet',
-    'Check the Downloads tab for scheme-wise quick links'
+    'Last Date for submission of National Means cum Merit Scholarship (NMMS) Applications on Portal by Students is: 31/08/2026',
+    'Last Date for submission of Umbrella Scheme for Education of ST Students - Pre-Matric Scholarship (Class IX & X) For ST Students is:  20/09/2026',
+    'Last Date for submission of PM YASASVI Pre Matric Scholarship Scheme For OBC EBC And DNT - Jammu & Kashmir is: 31/10/2026'
   ];
   document.getElementById('tickerMove').innerHTML =
     tickerItems.map(t => '<span>' + t + '</span>').join('');
@@ -781,6 +804,9 @@
   const SHEET_ID = '1edepUNjcgmPyjKTkYSMN2CXIsaewAd4OvNKQCi2J3XY';
   let SHEET_TAB = 'Sheet1';
   let dataTable, table;
+  let chartsReady = false;
+  let dashboardPending = false;
+  let galleryPending = false;
   const tableDiv = () => document.getElementById('table_div');
 
   function showDiagnostic(html) {
@@ -796,6 +822,7 @@
       chartsReady = true;
       drawTable();
       if (dashboardPending) loadDashboard();
+      if (galleryPending) loadGallery();
     });
     setTimeout(function() {
       if (!dataTable) {
@@ -904,13 +931,94 @@
     document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('submenu-open'));
   });
 
+  /* ---------- Scrolling Gallery (photos from a Google Sheet of Drive links) ---------- */
+  // 1. Make a Google Sheet (or a tab in an existing one). Share it as
+  //    "Anyone with the link – Viewer" (same requirement as the other sheets).
+  // 2. Give it two columns with headers, e.g.: PhotoURL | Caption
+  //    - PhotoURL: paste the normal Drive "Share" link for each photo
+  //      (drive.google.com/file/d/XXXX/view) — no need to reformat it,
+  //      the script below converts it automatically.
+  //    - Caption: optional text shown under the photo.
+  // 3. Paste the Sheet ID (the long string in its URL) and tab name below.
+  const GALLERY_SHEET_ID = '1hdUgO-fACPrRuxX-Tfpx13jzE7NvV5yrt-_Knc500zg';
+  const GALLERY_SHEET_TAB = 'Sheet1';
+  let galleryLoaded = false;
+
+  // Converts a normal Drive share link (or a Drive file ID buried in a URL)
+  // into a URL that actually renders as an <img>. Non-Drive URLs (e.g. a
+  // direct image link from elsewhere) are passed through unchanged.
+  function driveShareLinkToImageUrl(url) {
+    if (!url) return url;
+    url = url.toString().trim();
+    const m = url.match(/\/d\/([a-zA-Z0-9_-]{20,})/) || url.match(/[?&]id=([a-zA-Z0-9_-]{20,})/);
+    if (m && m[1]) {
+      return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
+    }
+    return url;
+  }
+
+  function renderGalleryPlaceholder(msg) {
+    document.getElementById('galleryTrack').innerHTML =
+      '<figure><div class="gallery-ph">' + (msg || 'No photos yet') + '</div></figure>';
+  }
+
+  function loadGallery() {
+    if (galleryLoaded) return;
+    if (!GALLERY_SHEET_ID || GALLERY_SHEET_ID.indexOf('PASTE_YOUR') === 0) {
+      renderGalleryPlaceholder('Gallery sheet not configured yet');
+      return;
+    }
+    galleryLoaded = true;
+    const query = new google.visualization.Query(
+      'https://docs.google.com/spreadsheets/d/' + GALLERY_SHEET_ID + '/gviz/tq?sheet=' + encodeURIComponent(GALLERY_SHEET_TAB)
+    );
+    query.send(function(response) {
+      if (response.isError()) {
+        renderGalleryPlaceholder('Could not load gallery photos');
+        galleryLoaded = false;
+        return;
+      }
+      const dt = response.getDataTable();
+      if (!dt || dt.getNumberOfRows() === 0) {
+        renderGalleryPlaceholder('No photos yet — add rows to the Gallery sheet');
+        return;
+      }
+      // Auto-detect which column holds the photo link and which holds the caption
+      let urlCol = 0, capCol = -1;
+      for (let c = 0; c < dt.getNumberOfColumns(); c++) {
+        const label = (dt.getColumnLabel(c) || '').toLowerCase();
+        if (label.includes('photo') || label.includes('image') || label.includes('url') || label.includes('link')) urlCol = c;
+        if (label.includes('caption') || label.includes('title') || label.includes('desc')) capCol = c;
+      }
+      const items = [];
+      for (let r = 0; r < dt.getNumberOfRows(); r++) {
+        const raw = dt.getValue(r, urlCol);
+        if (!raw) continue;
+        items.push({
+          src: driveShareLinkToImageUrl(raw),
+          caption: capCol > -1 ? (dt.getValue(r, capCol) || '') : ''
+        });
+      }
+      if (items.length === 0) { renderGalleryPlaceholder('No photos yet — add rows to the Gallery sheet'); return; }
+      // Duplicate the list so the right-to-left loop is seamless (no visible jump)
+      const doubled = items.concat(items);
+      document.getElementById('galleryTrack').innerHTML = doubled.map(function(it) {
+        const alt = (it.caption || 'Office photo').replace(/"/g, '&quot;');
+        return '<figure><img src="' + it.src + '" alt="' + alt + '" loading="lazy">' +
+          (it.caption ? '<figcaption>' + it.caption + '</figcaption>' : '') + '</figure>';
+      }).join('');
+    });
+  }
+
+  document.querySelector('.tab-btn[data-page="gallery"]').addEventListener('click', function() {
+    if (chartsReady) { loadGallery(); } else { galleryPending = true; }
+  });
+
   /* ---------- Dashboard (auto-detects columns from the sheet) ---------- */
   const DASH_SHEET_ID = '1q79zg88z6zMMskSRE4bJkelxotICXegZ2vlv1G5m71A';
   const DASH_SHEET_TAB = 'Sheet1'; // change if your tab is named differently
   const THEME_COLORS = ['#0b3d2e', '#c9a227', '#6f8f74', '#154d3a', '#a8863e', '#3a4436'];
 
-  let chartsReady = false;
-  let dashboardPending = false;
   let dashboardLoaded = false;
   let dashDataTable, dashTableObj;
 
@@ -962,7 +1070,7 @@
   function buildStats(dt) {
     const cols = dt.getNumberOfColumns();
     const rows = dt.getNumberOfRows();
-    const cards = ['<div class="stat-card"><div class="num">' + rows + '</div><div class="lbl">Total Records</div></div>'];
+    const cards = ['<div class="stat-card"><div class="num">' + rows + '</div><div class="lbl">Total Zones</div></div>'];
     for (let c = 0; c < cols && cards.length < 4; c++) {
       if (dt.getColumnType(c) === 'number') {
         let sum = 0;
