@@ -1139,15 +1139,18 @@
      Renders into BOTH the scrolling marquee and the static "Gallary Photos"
      grid from the same Google Drive source, so the two views always match.
 
-     TO GIVE EACH PHOTO ITS OWN NAME:
-     Open the Gallery Google Sheet and make sure it has TWO columns with
-     headers: PhotoURL | Caption
-       - PhotoURL: the normal Drive "Share" link for each photo.
-       - Caption: type the actual name/description you want shown under
-         that specific photo (e.g. "Independence Day Function 2026",
-         "Zonal Education Office Building"). Leave no row's Caption blank
-         if you want every photo individually labelled — an empty Caption
-         cell is what causes the generic "Office photo" text to repeat. */
+     TO GIVE EACH PHOTO ITS OWN NAME — exact layout required:
+       Row 1 (header row, MUST be exactly this — no real data here):
+         A1 = PhotoURL      B1 = Caption
+       Row 2 onward (your actual photos, one per row):
+         A2 = <drive link to photo 1>   B2 = Independence Day Function 2026
+         A3 = <drive link to photo 2>   B3 = Zonal Education Office Building
+         A4 = <drive link to photo 3>   B4 = Scholarship Camp, March 2026
+     The code reads row 1 to figure out which column is the photo link and
+     which is the caption — if row 1 holds a real photo link/caption instead
+     of the words "PhotoURL"/"Caption", it can't find the caption column and
+     falls back to the generic "Office photo" label for everything. Every
+     row's Caption cell needs its own text — a blank cell shows nothing. */
   const GALLERY_SHEET_ID = '1hdUgO-fACPrRuxX-Tfpx13jzE7NvV5yrt-_Knc500zg';
   const GALLERY_SHEET_TAB = 'Sheet1';
   let galleryLoaded = false;
@@ -1166,7 +1169,7 @@
     }
     galleryLoaded = true;
     const query = new google.visualization.Query(
-      'https://docs.google.com/spreadsheets/d/' + GALLERY_SHEET_ID + '/gviz/tq?sheet=' + encodeURIComponent(GALLERY_SHEET_TAB)
+      'https://docs.google.com/spreadsheets/d/' + GALLERY_SHEET_ID + '/gviz/tq?sheet=' + encodeURIComponent(GALLERY_SHEET_TAB) + '&headers=1'
     );
     query.send(function(response) {
       if (response.isError()) {
@@ -1340,7 +1343,7 @@
     aboutLoaded = true;
     aboutDiagnostic('Requesting data...');
     const query = new google.visualization.Query(
-      'https://docs.google.com/spreadsheets/d/' + ABOUT_SHEET_ID + '/gviz/tq?sheet=' + encodeURIComponent(ABOUT_SHEET_TAB)
+      'https://docs.google.com/spreadsheets/d/' + ABOUT_SHEET_ID + '/gviz/tq?sheet=' + encodeURIComponent(ABOUT_SHEET_TAB) + '&headers=1'
     );
     query.send(handleAboutResponse);
     setTimeout(function() {
@@ -1373,7 +1376,12 @@
     for (let c = 0; c < cols; c++) {
       const label = (dt.getColumnLabel(c) || '').toLowerCase();
       ABOUT_STAT_LABELS.forEach(function(want) {
-        const key = want.toLowerCase().split(' ')[0];
+        // "Total Students", "Total Submitted", etc. all share the first
+        // word "total" — matching on that word alone made every one of
+        // them grab whichever "total…" column appeared first. Use the
+        // second word instead so each label maps to its own column.
+        const words = want.toLowerCase().split(' ');
+        const key = (words.length > 1 && words[0] === 'total') ? words[1] : words[0];
         if (label.includes(key) && colMap[want] === undefined) colMap[want] = c;
       });
     }
