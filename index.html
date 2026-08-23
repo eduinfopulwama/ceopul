@@ -302,7 +302,7 @@
     font-family:'IBM Plex Mono', monospace;
   }
 
-  /* ---- Scrolling photo gallery (right-to-left marquee, sourced from a Google Sheet) ---- */
+  /* ---- photo gallery (right-to-left marquee, sourced from a Google Sheet) ---- */
   .photo-scroll-wrap{
     position:relative;
     overflow:hidden;
@@ -336,6 +336,33 @@
   @media (prefers-reduced-motion: reduce){
     .photo-scroll-track{ animation:none; overflow-x:auto; }
   }
+
+  /* ---- Gallery sub-tabs (Scrolling / Grid) ---- */
+  .gallery-subnav{
+    display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;
+  }
+  .gallery-subnav button{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-bottom:3px solid transparent;
+    color:var(--green-deep);
+    font-family:'Source Sans 3', sans-serif;
+    font-weight:600;
+    font-size:0.85rem;
+    letter-spacing:0.4px;
+    padding:10px 18px;
+    cursor:pointer;
+    text-transform:uppercase;
+    transition:all .2s ease;
+  }
+  .gallery-subnav button:hover{ background:#f5f1e2; }
+  .gallery-subnav button.active{
+    border-bottom:3px solid var(--gold);
+    background:var(--green-deep);
+    color:var(--gold);
+  }
+  .gallery-view{ display:none; }
+  .gallery-view.active{ display:block; }
 
   table{ width:100%; border-collapse:collapse; background:var(--paper); box-shadow:var(--shadow); }
   th,td{ text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); font-size:0.92rem; }
@@ -580,8 +607,22 @@
     <section class="page" id="gallery">
       <div class="section-title"><h2>Gallery</h2></div>
       <div class="sync-note">Chief Education Office Gallary</div>
-      <div class="photo-scroll-wrap" id="galleryScrollWrap">
-        <div class="photo-scroll-track" id="galleryTrack">
+
+      <div class="gallery-subnav" id="gallerySubnav">
+        <button type="button" class="gallery-subtab active" data-view="scrollView">Photos</button>
+        <button type="button" class="gallery-subtab" data-view="gridView">Gallary Photos</button>
+      </div>
+
+      <div class="gallery-view active" id="scrollView">
+        <div class="photo-scroll-wrap" id="galleryScrollWrap">
+          <div class="photo-scroll-track" id="galleryTrack">
+            <figure><div class="gallery-ph">Loading…</div></figure>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-view" id="gridView">
+        <div class="gallery-grid" id="galleryGrid">
           <figure><div class="gallery-ph">Loading…</div></figure>
         </div>
       </div>
@@ -643,7 +684,7 @@
     <!-- DOWNLOADS -->
     <section class="page" id="downloads">
       <div class="section-title"><h2>Downloads</h2></div>
-      <div class="sync-note">Links below open live Google Sheet / Google Doc sources maintained by this office.</div>
+      <div class="sync-note"> sources maintained by this office.</div>
       <ul class="dl-list">
         <li>
           <div>
@@ -664,14 +705,14 @@
             <strong>ST Scholarship – 9th &amp; 10th</strong>
             <div class="meta">Live Google Sheet</div>
           </div>
-          <a href="https://docs.google.com/spreadsheets/d/1J2pBi_4IMWlHGbV0lO67syOd1CLfcCao1zqMSy1-ErQ/edit?gid=0#gid=0" data-sheet-tab="ST-9th-10th" onclick="goToHomeWithTab(this);return false;">Open</a>
+          <a href="1J2pBi_4IMWlHGbV0lO67syOd1CLfcCao1zqMSy1-ErQ" data-sheet-tab="ST-9th-10th" onclick="goToHomeWithTab(this);return false;">Open</a>
         </li>
         <li>
           <div>
             <strong>ST Scholarship – 1st to 8th</strong>
             <div class="meta">Live Google Sheet</div>
           </div>
-          <a href="https://docs.google.com/spreadsheets/d/1ud9yehUKkfwmWxkD89EMhx_-2hq-CZiZ0Ce1gugzl1U/edit?gid=0#gid=0" data-sheet-tab="ST-1st-8th" onclick="goToHomeWithTab(this);return false;">Open</a>
+          <a href="1ud9yehUKkfwmWxkD89EMhx_-2hq-CZiZ0Ce1gugzl1U" data-sheet-tab="ST-1st-8th" onclick="goToHomeWithTab(this);return false;">Open</a>
         </li>
         <li>
           <div>
@@ -747,6 +788,16 @@
 
   document.getElementById('navToggle').addEventListener('click', () => {
     document.getElementById('mainNav').classList.toggle('open');
+  });
+
+  /* ---------- Gallery sub-tabs (Scrolling / Gallary grid) ---------- */
+  document.querySelectorAll('.gallery-subtab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.gallery-subtab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.gallery-view').forEach(v => v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.view).classList.add('active');
+    });
   });
 
   function goToHomeWithTab(el){
@@ -950,7 +1001,9 @@
     document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('submenu-open'));
   });
 
-  /* ---------- Scrolling Gallery (photos from a Google Sheet of Drive links) ---------- */
+  /* ---------- Gallery (photos from a Google Sheet of Drive links) ----------
+     Renders into BOTH the scrolling marquee and the static "Gallary Photos"
+     grid from the same Google Drive source, so the two views always match. */
   // 1. Make a Google Sheet (or a tab in an existing one). Share it as
   //    "Anyone with the link – Viewer" (same requirement as the other sheets).
   // 2. Give it two columns with headers, e.g.: PhotoURL | Caption
@@ -977,8 +1030,9 @@
   }
 
   function renderGalleryPlaceholder(msg) {
-    document.getElementById('galleryTrack').innerHTML =
-      '<figure><div class="gallery-ph">' + (msg || 'No photos yet') + '</div></figure>';
+    const html = '<figure><div class="gallery-ph">' + (msg || 'No photos yet') + '</div></figure>';
+    document.getElementById('galleryTrack').innerHTML = html;
+    document.getElementById('galleryGrid').innerHTML = html;
   }
 
   function loadGallery() {
@@ -1019,7 +1073,15 @@
         });
       }
       if (items.length === 0) { renderGalleryPlaceholder('No photos yet — add rows to the Gallery sheet'); return; }
-      // Duplicate the list so the right-to-left loop is seamless (no visible jump)
+
+      // Static "Gallary Photos" grid: one card per photo, same source, no looping.
+      document.getElementById('galleryGrid').innerHTML = items.map(function(it) {
+        const alt = (it.caption || 'Office photo').replace(/"/g, '&quot;');
+        return '<figure><img src="' + it.src + '" alt="' + alt + '" loading="lazy">' +
+          (it.caption ? '<figcaption>' + it.caption + '</figcaption>' : '') + '</figure>';
+      }).join('');
+
+      // Scrolling marquee: duplicate the list so the right-to-left loop is seamless.
       const doubled = items.concat(items);
       document.getElementById('galleryTrack').innerHTML = doubled.map(function(it) {
         const alt = (it.caption || 'Office photo').replace(/"/g, '&quot;');
@@ -1042,7 +1104,7 @@
         summed and "Zones" falls back to a row count.)
      2. Share it as "Anyone with the link – Viewer".
      3. Paste the Sheet ID (the long string in its URL) and tab name below. */
-  const ABOUT_SHEET_ID = 'PASTE_YOUR_ABOUT_SHEET_ID_HERE';
+  const ABOUT_SHEET_ID = '19T2bJXKhBUt6RHhmqNfGTJFz719O1-hPTtmTPcSi2iI';
   const ABOUT_SHEET_TAB = 'Sheet1';
   let aboutLoaded = false;
   let aboutDataTable;
@@ -1061,7 +1123,7 @@
       return;
     }
     aboutLoaded = true;
-    aboutDiagnostic('Requesting data from Google Sheets...');
+    aboutDiagnostic('Requesting data...');
     const query = new google.visualization.Query(
       'https://docs.google.com/spreadsheets/d/' + ABOUT_SHEET_ID + '/gviz/tq?sheet=' + encodeURIComponent(ABOUT_SHEET_TAB)
     );
