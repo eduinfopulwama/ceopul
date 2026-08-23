@@ -291,7 +291,7 @@
     margin:0; background:var(--paper); border:1px solid var(--line);
     box-shadow:var(--shadow); overflow:hidden;
   }
-  .gallery-grid img{ width:100%; height:150px; object-fit:cover; display:block; background:#eee7cf; }
+  .gallery-grid img{ width:100%; height:150px; object-fit:cover; display:block; background:#eee7cf; cursor:zoom-in; }
   .gallery-ph{
     width:100%; height:150px; display:flex; align-items:center; justify-content:center;
     background:linear-gradient(135deg, var(--green-mid), var(--green-deep));
@@ -309,22 +309,22 @@
     background:var(--paper);
     border:1px solid var(--line);
     box-shadow:var(--shadow);
-    padding:14px 0;
+    padding:18px 0;
   }
   .photo-scroll-track{
     display:flex;
     align-items:stretch;
-    gap:14px;
+    gap:16px;
     width:max-content;
     animation:scrollGalleryRTL 45s linear infinite;
-    padding:0 14px;
+    padding:0 16px;
   }
   .photo-scroll-wrap:hover .photo-scroll-track{ animation-play-state:paused; }
   .photo-scroll-track figure{
-    margin:0; flex:0 0 auto; width:220px;
+    margin:0; flex:0 0 auto; width:380px;
     background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden;
   }
-  .photo-scroll-track img{ width:220px; height:150px; object-fit:cover; display:block; background:#eee7cf; }
+  .photo-scroll-track img{ width:380px; height:280px; object-fit:cover; display:block; background:#eee7cf; cursor:zoom-in; }
   .photo-scroll-track figcaption{
     padding:8px 10px; font-size:0.8rem; color:var(--sage);
     font-family:'IBM Plex Mono', monospace;
@@ -335,6 +335,10 @@
   }
   @media (prefers-reduced-motion: reduce){
     .photo-scroll-track{ animation:none; overflow-x:auto; }
+  }
+  @media (max-width:720px){
+    .photo-scroll-track figure{ width:270px; }
+    .photo-scroll-track img{ width:270px; height:190px; }
   }
 
   /* ---- Gallery sub-tabs (Scrolling / Grid) ---- */
@@ -364,6 +368,35 @@
   .gallery-view{ display:none; }
   .gallery-view.active{ display:block; }
 
+  /* ---- Lightbox (click-to-zoom) for gallery photos ---- */
+  .lightbox-overlay{
+    display:none;
+    position:fixed; inset:0; z-index:1000;
+    background:rgba(11,61,46,0.92);
+    align-items:center; justify-content:center;
+    padding:30px;
+  }
+  .lightbox-overlay.open{ display:flex; }
+  .lightbox-figure{
+    margin:0; max-width:92vw; max-height:88vh;
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+  }
+  .lightbox-figure img{
+    max-width:92vw; max-height:78vh; object-fit:contain;
+    border:2px solid var(--gold); box-shadow:0 10px 40px rgba(0,0,0,0.5);
+    background:var(--paper);
+  }
+  .lightbox-figure figcaption{
+    color:var(--gold); font-family:'IBM Plex Mono', monospace; font-size:0.85rem; text-align:center;
+  }
+  .lightbox-close{
+    position:absolute; top:18px; right:26px;
+    color:#fff; font-size:2.4rem; line-height:1; cursor:pointer;
+    font-family:'Playfair Display', serif; font-weight:700;
+    z-index:1001;
+  }
+  .lightbox-close:hover{ color:var(--gold); }
+
   table{ width:100%; border-collapse:collapse; background:var(--paper); box-shadow:var(--shadow); }
   th,td{ text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); font-size:0.92rem; }
   th{ background:var(--green-deep); color:var(--gold); font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:1px; text-transform:uppercase; }
@@ -389,6 +422,18 @@
   button.submit:disabled{ opacity:0.6; cursor:not-allowed; }
   #formStatus{ font-family:'IBM Plex Mono', monospace; font-size:0.78rem; min-height:1.2em; }
   .map-embed iframe{ width:100%; height:260px; border:1px solid var(--line); }
+
+  /* ---- Contact Us photo (below phone number) ---- */
+  .contact-photo{ margin-top:16px; text-align:center; }
+  .contact-photo img{
+    width:100%; max-height:220px; object-fit:cover;
+    border:1px solid var(--line); box-shadow:var(--shadow); display:block; cursor:zoom-in;
+  }
+  .contact-photo .gallery-ph{ height:180px; }
+  .contact-photo-caption{
+    font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--sage);
+    margin-top:8px;
+  }
 
   .dl-list{ list-style:none; }
   .dl-list li{
@@ -597,16 +642,17 @@
         <h2>Our Mandate</h2>
         <p>We are providing technical support and overall monitoring of the scholarship schemes particularly National Means cum Merit Scholarship Scheme and Umbrella Scheme for ST Students.</p>
       </div>
-      <div class="sync-note">Figures below are pulled live  and it refreshes here automatically the next time this page is opened.</div>
       <div class="stat-grid" id="aboutStats">
-        <div class="stat-card"><div class="num">—</div><div class="lbl">Loading…</div></div>
+        <div class="stat-card"><div class="num">—</div><div class="lbl">Schools Covered</div></div>
+        <div class="stat-card"><div class="num">—</div><div class="lbl">Zones</div></div>
+        <div class="stat-card"><div class="num">—</div><div class="lbl">Active Schemes</div></div>
+        <div class="stat-card"><div class="num">—</div><div class="lbl">Staff Strength</div></div>
       </div>
     </section>
 
     <!-- GALLERY -->
     <section class="page" id="gallery">
       <div class="section-title"><h2>Gallery</h2></div>
-      <div class="sync-note">Chief Education Office Gallary</div>
 
       <div class="gallery-subnav" id="gallerySubnav">
         <button type="button" class="gallery-subtab active" data-view="scrollView">Photos</button>
@@ -662,6 +708,11 @@
             <li><strong>Email:</strong> ceopulssa@rediffmail.com</li>
             <li><strong>Phone:</strong> 000000000</li>
           </ul>
+          <div class="contact-photo" id="contactPhotoWrap">
+            <div class="gallery-ph" id="contactPhotoPh">Loading…</div>
+            <img id="contactImage" src="" alt="Office Photo" style="display:none;" loading="lazy">
+            <div class="contact-photo-caption" id="contactImageCaption"></div>
+          </div>
         </div>
         <div class="card">
           <h3>Send a Message</h3>
@@ -705,14 +756,14 @@
             <strong>ST Scholarship – 9th &amp; 10th</strong>
             <div class="meta">Live Google Sheet</div>
           </div>
-          <a href="1J2pBi_4IMWlHGbV0lO67syOd1CLfcCao1zqMSy1-ErQ" data-sheet-tab="ST-9th-10th" onclick="goToHomeWithTab(this);return false;">Open</a>
+          <a href="https://docs.google.com/spreadsheets/d/1J2pBi_4IMWlHGbV0lO67syOd1CLfcCao1zqMSy1-ErQ/edit?gid=0#gid=0" data-sheet-tab="ST-9th-10th" onclick="goToHomeWithTab(this);return false;">Open</a>
         </li>
         <li>
           <div>
             <strong>ST Scholarship – 1st to 8th</strong>
             <div class="meta">Live Google Sheet</div>
           </div>
-          <a href="1ud9yehUKkfwmWxkD89EMhx_-2hq-CZiZ0Ce1gugzl1U" data-sheet-tab="ST-1st-8th" onclick="goToHomeWithTab(this);return false;">Open</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ud9yehUKkfwmWxkD89EMhx_-2hq-CZiZ0Ce1gugzl1U/edit?gid=0#gid=0" data-sheet-tab="ST-1st-8th" onclick="goToHomeWithTab(this);return false;">Open</a>
         </li>
         <li>
           <div>
@@ -721,6 +772,11 @@
           </div>
           <a href="https://docs.google.com/document/d/1i4WhScJPGcsqjEUXakG5PBS-adz43WUL-MI8_36QseQ/preview" target="_blank" rel="noopener">Open</a>
         </li>
+      </ul>
+
+      <div class="sync-note" style="margin-top:22px;">📄 PDF documents shared via Google Drive — click Download to save a copy.</div>
+      <ul class="dl-list" id="pdfDownloadList">
+        <li><div><strong>Loading…</strong></div></li>
       </ul>
     </section>
 
@@ -772,6 +828,14 @@
   </footer>
 </div>
 
+<div class="lightbox-overlay" id="lightboxOverlay">
+  <span class="lightbox-close" id="lightboxClose">&times;</span>
+  <figure class="lightbox-figure">
+    <img id="lightboxImg" src="" alt="">
+    <figcaption id="lightboxCaption"></figcaption>
+  </figure>
+</div>
+
 <script>
   /* ---------- Tab navigation ---------- */
   const tabBtns = document.querySelectorAll('.tab-btn');
@@ -798,6 +862,47 @@
       btn.classList.add('active');
       document.getElementById(btn.dataset.view).classList.add('active');
     });
+  });
+
+  /* ---------- Lightbox (click-to-zoom for gallery / contact photos) ---------- */
+  const lightboxOverlay = document.getElementById('lightboxOverlay');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCaption = document.getElementById('lightboxCaption');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  function openLightbox(src, caption) {
+    lightboxImg.src = src;
+    lightboxImg.alt = caption || 'Photo';
+    lightboxCaption.textContent = caption || '';
+    lightboxOverlay.classList.add('open');
+  }
+  function closeLightbox() {
+    lightboxOverlay.classList.remove('open');
+    lightboxImg.src = '';
+  }
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxOverlay.addEventListener('click', function(e) {
+    if (e.target === lightboxOverlay) closeLightbox();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+  function enableZoomOnClick(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.addEventListener('click', function(e) {
+      const img = e.target.closest('img');
+      if (!img || !img.src) return;
+      const figure = img.closest('figure');
+      const cap = figure ? figure.querySelector('figcaption') : null;
+      openLightbox(img.src, cap ? cap.textContent : img.alt);
+    });
+  }
+  enableZoomOnClick('galleryTrack');
+  enableZoomOnClick('galleryGrid');
+  document.getElementById('contactImage').addEventListener('click', function() {
+    if (!this.src) return;
+    openLightbox(this.src, document.getElementById('contactImageCaption').textContent);
   });
 
   function goToHomeWithTab(el){
@@ -876,6 +981,7 @@
   let dashboardPending = false;
   let galleryPending = false;
   let aboutPending = false;
+  let downloadsPending = false;
   const tableDiv = () => document.getElementById('table_div');
 
   function showDiagnostic(html) {
@@ -893,6 +999,7 @@
       if (dashboardPending) loadDashboard();
       if (galleryPending) loadGallery();
       if (aboutPending) loadAboutStats();
+      if (downloadsPending) loadPdfDownloads();
     });
     setTimeout(function() {
       if (!dataTable) {
@@ -1001,6 +1108,40 @@
     document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('submenu-open'));
   });
 
+  // Converts a normal Drive share link (or a Drive file ID buried in a URL)
+  // into a URL that actually renders as an <img>. Non-Drive URLs (e.g. a
+  // direct image link from elsewhere) are passed through unchanged.
+  function driveShareLinkToImageUrl(url) {
+    if (!url) return url;
+    url = url.toString().trim();
+    const m = url.match(/\/d\/([a-zA-Z0-9_-]{20,})/) || url.match(/[?&]id=([a-zA-Z0-9_-]{20,})/);
+    if (m && m[1]) {
+      return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
+    }
+    return url;
+  }
+
+  /* ---------- Contact Us photo (single Google Drive image + caption) ----------
+     Paste a normal Drive "Share" link (or a direct image URL) below, plus a
+     caption. Leave CONTACT_IMAGE_SOURCE untouched to keep the placeholder. */
+  const CONTACT_IMAGE_SOURCE = 'PASTE_YOUR_CONTACT_IMAGE_DRIVE_LINK_HERE';
+  const CONTACT_IMAGE_CAPTION = 'Office of the CEO, Pulwama';
+
+  (function setupContactImage() {
+    const img = document.getElementById('contactImage');
+    const ph = document.getElementById('contactPhotoPh');
+    const cap = document.getElementById('contactImageCaption');
+    if (!CONTACT_IMAGE_SOURCE || CONTACT_IMAGE_SOURCE.indexOf('PASTE_YOUR') === 0) {
+      ph.textContent = 'Add a photo';
+      cap.textContent = '';
+      return;
+    }
+    img.src = driveShareLinkToImageUrl(CONTACT_IMAGE_SOURCE);
+    img.style.display = 'block';
+    ph.style.display = 'none';
+    cap.textContent = CONTACT_IMAGE_CAPTION;
+  })();
+
   /* ---------- Gallery (photos from a Google Sheet of Drive links) ----------
      Renders into BOTH the scrolling marquee and the static "Gallary Photos"
      grid from the same Google Drive source, so the two views always match. */
@@ -1015,19 +1156,6 @@
   const GALLERY_SHEET_ID = '1hdUgO-fACPrRuxX-Tfpx13jzE7NvV5yrt-_Knc500zg';
   const GALLERY_SHEET_TAB = 'Sheet1';
   let galleryLoaded = false;
-
-  // Converts a normal Drive share link (or a Drive file ID buried in a URL)
-  // into a URL that actually renders as an <img>. Non-Drive URLs (e.g. a
-  // direct image link from elsewhere) are passed through unchanged.
-  function driveShareLinkToImageUrl(url) {
-    if (!url) return url;
-    url = url.toString().trim();
-    const m = url.match(/\/d\/([a-zA-Z0-9_-]{20,})/) || url.match(/[?&]id=([a-zA-Z0-9_-]{20,})/);
-    if (m && m[1]) {
-      return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
-    }
-    return url;
-  }
 
   function renderGalleryPlaceholder(msg) {
     const html = '<figure><div class="gallery-ph">' + (msg || 'No photos yet') + '</div></figure>';
@@ -1074,11 +1202,12 @@
       }
       if (items.length === 0) { renderGalleryPlaceholder('No photos yet — add rows to the Gallery sheet'); return; }
 
-      // Static "Gallary Photos" grid: one card per photo, same source, no looping.
+      // Static "Gallary Photos" grid: one card per photo, same source, no looping,
+      // caption printed under every photo.
       document.getElementById('galleryGrid').innerHTML = items.map(function(it) {
         const alt = (it.caption || 'Office photo').replace(/"/g, '&quot;');
         return '<figure><img src="' + it.src + '" alt="' + alt + '" loading="lazy">' +
-          (it.caption ? '<figcaption>' + it.caption + '</figcaption>' : '') + '</figure>';
+          '<figcaption>' + (it.caption || 'Office photo') + '</figcaption></figure>';
       }).join('');
 
       // Scrolling marquee: duplicate the list so the right-to-left loop is seamless.
@@ -1093,6 +1222,81 @@
 
   document.querySelector('.tab-btn[data-page="gallery"]').addEventListener('click', function() {
     if (chartsReady) { loadGallery(); } else { galleryPending = true; }
+  });
+
+  /* ---------- PDF Downloads (from a Google Sheet of Drive links) ----------
+     1. Create a Google Sheet (or a tab in an existing one) with two columns,
+        e.g.: Title | FileURL
+        - FileURL: paste the normal Drive "Share" link for each PDF
+          (drive.google.com/file/d/XXXX/view) — converted automatically below.
+     2. Share it as "Anyone with the link – Viewer".
+     3. Paste the Sheet ID (the long string in its URL) and tab name below. */
+  const DOWNLOAD_SHEET_ID = 'PASTE_YOUR_DOWNLOADS_SHEET_ID_HERE';
+  const DOWNLOAD_SHEET_TAB = 'Sheet1';
+  let downloadsLoaded = false;
+
+  // Converts a Drive share link into a direct-download URL so clicking
+  // "Download" saves the file instead of opening Drive's preview page.
+  function driveShareLinkToDownloadUrl(url) {
+    if (!url) return url;
+    url = url.toString().trim();
+    const m = url.match(/\/d\/([a-zA-Z0-9_-]{20,})/) || url.match(/[?&]id=([a-zA-Z0-9_-]{20,})/);
+    if (m && m[1]) {
+      return 'https://drive.google.com/uc?export=download&id=' + m[1];
+    }
+    return url;
+  }
+
+  function pdfDiagnostic(html) {
+    document.getElementById('pdfDownloadList').innerHTML = '<li><div>' + html + '</div></li>';
+  }
+
+  function loadPdfDownloads() {
+    if (downloadsLoaded) return;
+    if (!DOWNLOAD_SHEET_ID || DOWNLOAD_SHEET_ID.indexOf('PASTE_YOUR') === 0) {
+      pdfDiagnostic('No documents added yet.');
+      return;
+    }
+    downloadsLoaded = true;
+    pdfDiagnostic('Loading documents…');
+    const query = new google.visualization.Query(
+      'https://docs.google.com/spreadsheets/d/' + DOWNLOAD_SHEET_ID + '/gviz/tq?sheet=' + encodeURIComponent(DOWNLOAD_SHEET_TAB)
+    );
+    query.send(function(response) {
+      if (response.isError()) {
+        pdfDiagnostic('Could not load documents list.');
+        downloadsLoaded = false;
+        return;
+      }
+      const dt = response.getDataTable();
+      if (!dt || dt.getNumberOfRows() === 0) {
+        pdfDiagnostic('No documents added yet.');
+        return;
+      }
+      let titleCol = 0, urlCol = -1;
+      for (let c = 0; c < dt.getNumberOfColumns(); c++) {
+        const label = (dt.getColumnLabel(c) || '').toLowerCase();
+        if (label.includes('title') || label.includes('name') || label.includes('doc')) titleCol = c;
+        if (label.includes('url') || label.includes('link') || label.includes('file')) urlCol = c;
+      }
+      if (urlCol === -1) urlCol = dt.getNumberOfColumns() > 1 ? 1 : 0;
+      const rows = [];
+      for (let r = 0; r < dt.getNumberOfRows(); r++) {
+        const rawUrl = dt.getValue(r, urlCol);
+        if (!rawUrl) continue;
+        const title = dt.getValue(r, titleCol) || 'Document';
+        rows.push({ title: title, url: driveShareLinkToDownloadUrl(rawUrl) });
+      }
+      if (rows.length === 0) { pdfDiagnostic('No documents added yet.'); return; }
+      document.getElementById('pdfDownloadList').innerHTML = rows.map(function(item) {
+        return '<li><div><strong>' + item.title + '</strong><div class="meta">PDF · Google Drive</div></div>' +
+          '<a href="' + item.url + '" target="_blank" rel="noopener" download>Download</a></li>';
+      }).join('');
+    });
+  }
+
+  document.querySelector('.tab-btn[data-page="downloads"]').addEventListener('click', function() {
+    if (chartsReady) { loadPdfDownloads(); } else { downloadsPending = true; }
   });
 
   /* ---------- About Us live stats (from a Google Sheet) ----------
